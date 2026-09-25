@@ -53,3 +53,25 @@ For a short message within a small squad, can a low-latency profile be used on n
 the mesh switches to a more robust profile for longer hops? The simulator makes the trade-off
 explicit through estimated airtime and hop latency.
 
+## How the demo works
+
+The built-in topology contains three nodes: `alpha` at 0 m, `bravo` at 250 m and `charlie` at
+850 m. The first hop fits the fast profile, while the second hop is long enough to use the robust
+profile. The simulator adds the estimated airtime and a small per-hop processing delay:
+
+```text
+alpha --250 m--> bravo --600 m--> charlie
+fast              robust
+```
+
+For example, the `CONTACT` packet is accepted at `charlie` when it is still inside its validity
+window. A second delivery attempt with the same packet ID is rejected, modelling a basic
+anti-replay rule. If the relay is removed and no hop can cover the distance, the simulator raises
+an explicit unreachable-route error.
+
+## Scope and next steps
+
+This repository is intentionally small and deterministic. It is useful for comparing design
+choices and producing reproducible numbers in a report, but it does not model antenna gain,
+interference, terrain, real LoRa headers, encryption, or a physical SX126x radio. A later version
+could import measured link data and render latency/loss charts.
